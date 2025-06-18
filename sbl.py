@@ -294,7 +294,7 @@ def main():
             
             # 데이터 로드
             with st.spinner("📂 RAW 데이터를 로딩 중..."):
-                raw_df = pd.read_excel(uploaded_file, sheet_name=0)
+                raw_df = pd.read_excel(uploaded_file, sheet_name=0, dtype={'신고과': str})
                 raw_df = raw_df.dropna(axis=1, how='all')
             
             log_success(f"RAW 데이터 로드 완료 (행: {len(raw_df)}, "
@@ -346,15 +346,13 @@ def main():
                 
                 # 데이터 변환
                 for col in final_df.columns:
-                    if col not in ["정정차수", "세관", "신고세관"]:
+                    if col not in ["정정차수", "세관", "신고세관", "신고과"]:
                         final_df[col] = final_df[col].apply(
                             lambda x: process_value(x, col)
                         )
-                    elif col in ["정정차수", "세관", "신고세관"]:
+                    elif col in ["정정차수", "세관", "신고세관", "신고과"]:
                         final_df[col] = final_df[col].apply(
-                            lambda x: str(int(float(x))).zfill(3) 
-                            if str(x).replace('.', '', 1).isdigit() 
-                            else str(x)
+                            lambda x: str(x)
                         )
                 
                 # NO 컬럼 추가 (성능 경고 해결)
